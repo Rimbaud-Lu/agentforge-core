@@ -4,3 +4,5 @@ qdrant-client
 redis
 prometheus-client
 kafka-python
+pyyaml
+python-dotenv

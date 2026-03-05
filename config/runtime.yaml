@@ -1,0 +1,26 @@
+# Runtime Configuration
+
+runtime:
+  max_agents: 10
+  parallel_execution: true
+  retry_count: 3
+  timeout_seconds: 300
+  log_level: INFO
+
+# Memory Configuration
+memory:
+  session_context_size: 10
+  cache_ttl: 3600
+  vector_dimensions: 1536
+
+# Workflow Configuration
+workflow:
+  max_parallel_tasks: 5
+  task_timeout: 120
+  enable_checkpoints: true
+
+# Distributed Configuration
+distributed:
+  enabled: false
+  kafka_bootstrap_servers: "localhost:9092"
+  worker_replicas: 3

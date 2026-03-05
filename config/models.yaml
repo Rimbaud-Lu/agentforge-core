@@ -1,0 +1,28 @@
+# Model Configuration
+
+planner:
+  provider: anthropic
+  model: claude-3-opus
+  temperature: 0.7
+  max_tokens: 4000
+
+coder:
+  provider: openai
+  model: codex
+  temperature: 0.3
+  max_tokens: 2000
+
+debugger:
+  provider: deepseek
+  model: deepseek-coder
+  temperature: 0.2
+  max_tokens: 2000
+
+docs:
+  provider: qwen
+  model: qwen-max
+  temperature: 0.5
+  max_tokens: 3000
+
+# Default fallback model
+default: claude

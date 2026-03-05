@@ -1,0 +1,18 @@
+project: test-project
+
+agents:
+  - backend_agent
+  - frontend_agent
+  - qa_agent
+
+skills:
+  - generate_api
+  - generate_tests
+  - deploy_service
+
+models:
+  default: claude
+  
+runtime:
+  max_agents: 10
+  parallel_execution: true
