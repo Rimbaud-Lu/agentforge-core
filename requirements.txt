@@ -1,2 +1,4 @@
 openai
 opencode
+qdrant-client
+redis
