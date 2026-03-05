@@ -69,3 +69,14 @@ def main():
 if __name__ == "__main__":
     main()
 '''
+
+
+
+# YAML patch: run function
+def run(prompt):
+    return f"""
+# Generated test file
+
+def test_sample():
+    assert True
+"""

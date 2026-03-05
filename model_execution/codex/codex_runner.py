@@ -72,3 +72,17 @@ def main():
 if __name__ == "__main__":
     main()
 '''
+
+
+
+# YAML patch: run function
+def run(prompt):
+    return f"""
+# Generated code for: {prompt}
+
+def main():
+    print("Executing: {prompt}")
+
+if __name__ == "__main__":
+    main()
+"""

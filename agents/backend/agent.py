@@ -1,20 +1,18 @@
-from model_execution.router import execute_with_router, route_task
+from skills.router import select_skill
+from model_execution.router import select_model
 from tools.filesystem.writer import write_file
 
 def run_agent(plan):
-    """Run agent with task plan using model router"""
     task = plan["task"]
     
-    print("Agent executing task:", task)
+    skill = select_skill(task)
     
-    # Use model router to determine which model to use
-    model = route_task(task)
-    print(f"Selected model: {model}")
+    if skill:
+        result = skill(task)
+    else:
+        model = select_model(task)
+        result = model(task)
     
-    # Generate code using appropriate model
-    code = execute_with_router(task)
+    write_file("generated_project/output.py", result)
     
-    # Write generated code
-    write_file("generated_project/main.py", code)
-    
-    return code
+    return result

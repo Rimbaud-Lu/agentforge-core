@@ -42,3 +42,16 @@ def execute_with_router(task: str):
         return runner.generate(task)
     else:
         raise ValueError(f"Unknown model: {model}")
+
+# YAML patch: select_model function
+def select_model(task):
+    if "architecture" in task:
+        from model_execution.claude.claude_runner import run
+        return run
+    
+    if "test" in task:
+        from model_execution.deepseek.deepseek_runner import run
+        return run
+    
+    from model_execution.codex.codex_runner import run
+    return run

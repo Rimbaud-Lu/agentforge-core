@@ -91,3 +91,17 @@ if __name__ == "__main__":
     solution = Solution()
     print(solution.execute())
 '''
+
+
+
+# YAML patch: run function
+def run(prompt):
+    return f"""
+# Architecture plan
+
+Project structure:
+
+* backend
+* frontend
+* tests
+"""
