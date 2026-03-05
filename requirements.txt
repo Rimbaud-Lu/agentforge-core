@@ -3,3 +3,4 @@ opencode
 qdrant-client
 redis
 prometheus-client
+kafka-python

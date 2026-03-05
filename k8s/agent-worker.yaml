@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent-worker
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: agent-worker
+  template:
+    metadata:
+      labels:
+        app: agent-worker
+    spec:
+      containers:
+        - name: worker
+          image: agentforge/worker:latest
+          command: ["python", "-m", "agentforge_core.distributed.agent_worker"]
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: "kafka:9092"
+            - name: AGENT_TASK_TOPIC
+              value: "agent_tasks"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: agent-worker
+spec:
+  selector:
+    app: agent-worker
+  ports:
+    - port: 80
+      targetPort: 8000
