@@ -2,3 +2,4 @@ openai
 opencode
 qdrant-client
 redis
+prometheus-client
