@@ -1,9 +1,12 @@
-from model_execution.codex.codex_runner import generate_code
-from tools.filesystem.writer import write_file
+from skills.code.generate_api import generate_api
 
 def run_agent(plan):
-    print("Running agent with plan:", plan)
+    task = plan["task"]
     
-    code = generate_code(plan["task"])
+    print("Agent executing task:", task)
     
-    write_file("generated_project/main.py", code)
+    if "api" in task:
+        result = generate_api("sample")
+        print(result)
+    else:
+        print("No skill matched task")
