@@ -33,6 +33,8 @@ def get_env_summary() -> dict:
         "ANTHROPIC_API_KEY",
         "DEEPSEEK_API_KEY",
         "QWEN_API_KEY",
+        "REDIS_URL",
+        "QDRANT_URL",
     ]
     return {key: bool(os.getenv(key)) for key in required}
 
@@ -40,6 +42,13 @@ def get_env_summary() -> dict:
 def validate_environment() -> list[str]:
     problems = []
     envs = get_env_summary()
-    if not any(envs.values()):
+
+    if not any(envs.get(k) for k in ["OPENAI_API_KEY", "ANTHROPIC_API_KEY", "DEEPSEEK_API_KEY", "QWEN_API_KEY"]):
         problems.append("No model API key configured in environment.")
+
+    if not envs.get("REDIS_URL"):
+        problems.append("REDIS_URL is not configured.")
+    if not envs.get("QDRANT_URL"):
+        problems.append("QDRANT_URL is not configured.")
+
     return problems
