@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import argparse
 import json
 import sys
@@ -5,9 +7,12 @@ import sys
 from agentforge_core.app import AgentForgeApp
 from agentforge_core.bootstrap.init_project import init_project
 from agentforge_core.config_loader import load_all_configs, validate_environment
+from agentforge_core.logging_utils import setup_logging
 
 
 def main():
+    logger = setup_logging()
+
     parser = argparse.ArgumentParser(description="AgentForge CLI")
     parser.add_argument("task", nargs="?", help="Task to execute")
     parser.add_argument("--init", action="store_true", help="Initialize a new AgentForge project")
@@ -22,9 +27,13 @@ def main():
 
     if args.doctor:
         try:
-            load_all_configs()
+            configs = load_all_configs()
             problems = validate_environment()
-            payload = {"ok": len(problems) == 0, "problems": problems}
+            payload = {
+                "ok": len(problems) == 0,
+                "problems": problems,
+                "config_keys": list(configs.keys()),
+            }
         except Exception as e:
             payload = {"ok": False, "problems": [str(e)]}
 
@@ -35,6 +44,7 @@ def main():
         parser.print_help()
         return
 
+    logger.info("Executing task: %s", args.task)
     app = AgentForgeApp()
     result = app.execute_task(args.task, model_override=args.model)
 
@@ -46,7 +56,3 @@ def main():
         print(f"Model: {result['model']}")
         print(f"Status: {result['result']['status']}")
         print(f"Message: {result['result'].get('message', '')}")
-
-
-if __name__ == "__main__":
-    main()
