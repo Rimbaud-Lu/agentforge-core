@@ -1,24 +1,25 @@
 # AgentForge Core
 
-AgentForge Core is an AI Agent Software Factory prototype focused on:
+AgentForge Core is an AI agent software factory prototype focused on:
 planner -> skill routing -> model routing -> workflow execution.
 
-## Current status
+## Current repository status
 
-Implemented in repository:
-- Core CLI
+Implemented:
+- CLI entrypoint
 - Planner
 - Skill router
 - Model router
 - Workflow executor
-- Memory / observability / distributed module skeletons
-- Docker / Redis / Qdrant scaffolding
+- Memory / observability / distributed skeletons
+- Docker scaffolding
+- Basic CI and tests
 
-Not fully complete yet:
-- Real model provider integrations
-- Robust workflow persistence
+Not production-complete:
+- Real provider-backed model execution
+- Production workflow persistence
 - Full dashboard runtime
-- Production distributed execution
+- Production-grade distributed workers
 
 ## Quick start
 
@@ -27,8 +28,16 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -e .[dev]
 cp .env.example .env
-python -m agentforge_core.cli.cli --doctor
-python -m agentforge_core.cli.cli "create fastapi project"
+python -m agentforge_core.main --doctor
+python -m agentforge_core.main "create fastapi project"
+```
+
+## CLI examples
+
+```bash
+agentforge --doctor
+agentforge "generate backend api"
+agentforge --json "create agent workflow"
 ```
 
 ## Docker
@@ -37,30 +46,15 @@ python -m agentforge_core.cli.cli "create fastapi project"
 docker compose up --build
 ```
 
-## CLI
-
-```bash
-agentforge --doctor
-agentforge "create fastapi project"
-agentforge --json "generate backend api"
-```
-
 ## Testing
 
 ```bash
 pytest -q
 ```
 
-## Roadmap alignment
+## Next priorities
 
-- Phase 1: core flow present
-- Phase 2: skill structure present
-- Phase 3: model routing present
-- Phase 4+: partial skeletons present, not production complete
-
-## Repository cleanup goals
-
-- remove generated artifacts from git
-- improve tests
 - unify package boundaries
-- add CI/CD
+- connect real model providers
+- improve workflow persistence
+- expand observability metrics
