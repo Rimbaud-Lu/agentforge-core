@@ -1,21 +1,12 @@
-"""
-AgentForge Project Bootstrap
-"""
-
-import os
+from pathlib import Path
 
 
 def init_project(project_name="my-agent-project"):
-    """Initialize a new AgentForge project"""
-    
-    # Create project directories
-    os.makedirs("agents", exist_ok=True)
-    os.makedirs("skills", exist_ok=True)
-    os.makedirs("config", exist_ok=True)
-    os.makedirs("tests", exist_ok=True)
-    
-    # Create agentforge.yaml config
-    config = f"""project: {project_name}
+    for folder in ["agents", "skills", "config", "tests"]:
+        Path(folder).mkdir(parents=True, exist_ok=True)
+
+    Path("agentforge.yaml").write_text(
+        f"""project: {project_name}
 
 agents:
   - backend_agent
@@ -29,26 +20,20 @@ skills:
 
 models:
   default: claude
-  
+
 runtime:
   max_agents: 10
   parallel_execution: true
-"""
-    
-    with open("agentforge.yaml", "w") as f:
-        f.write(config)
-    
-    print(f"AgentForge project '{project_name}' initialized successfully!")
-    print("\nProject structure created:")
-    print("  - agents/")
-    print("  - skills/")
-    print("  - config/")
-    print("  - tests/")
-    print("  - agentforge.yaml")
-    print("\nNext steps:")
-    print("  1. Copy .env.example to .env and add your API keys")
-    print("  2. Run: python -m agentforge_core.cli.cli 'your task'")
+""",
+        encoding="utf-8",
+    )
 
-
-if __name__ == "__main__":
-    init_project()
+    Path("agents/sample_agent.py").write_text(
+        "class SampleAgent:\n    name = 'sample_agent'\n",
+        encoding="utf-8",
+    )
+    Path("skills/sample_skill.py").write_text(
+        "def run(task: str):\n    return f\"handled: {task}\"\n",
+        encoding="utf-8",
+    )
+    print(f"Initialized AgentForge project: {project_name}")

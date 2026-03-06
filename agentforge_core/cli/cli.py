@@ -1,49 +1,51 @@
-"""
-AgentForge CLI Entry Point
-"""
-
 import argparse
+import json
 import sys
-import os
 
-# Add parent directory to path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from agentforge_core.app import AgentForgeApp
+from agentforge_core.bootstrap.init_project import init_project
+from agentforge_core.config_loader import load_all_configs, validate_environment
 
 
 def main():
-    """Main CLI entry point"""
-    parser = argparse.ArgumentParser(
-        description="AgentForge CLI - AI Agent Software Factory"
-    )
-    
+    parser = argparse.ArgumentParser(description="AgentForge CLI")
     parser.add_argument("task", nargs="?", help="Task to execute")
     parser.add_argument("--init", action="store_true", help="Initialize a new AgentForge project")
-    parser.add_argument("--config", default="config/runtime.yaml", help="Path to config file")
-    parser.add_argument("--model", default="claude", help="Model to use")
-    parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
-    
+    parser.add_argument("--doctor", action="store_true", help="Validate config and environment")
+    parser.add_argument("--model", default=None, help="Override selected model")
+    parser.add_argument("--json", action="store_true", help="Output JSON")
     args = parser.parse_args()
-    
+
     if args.init:
-        from agentforge_core.bootstrap.init_project import init_project
         init_project()
-    elif args.task:
-        print(f"Executing task: {args.task}")
-        print(f"Using model: {args.model}")
-        # Import and run workflow
+        return
+
+    if args.doctor:
         try:
-            from workflow.workflow_engine import WorkflowEngine
-            from workflow.workflow_executor import WorkflowExecutor
-            
-            we = WorkflowEngine()
-            executor = WorkflowExecutor()
-            
-            print(f"Task '{args.task}' would be executed here")
-            print("(Full execution requires configured models)")
+            load_all_configs()
+            problems = validate_environment()
+            payload = {"ok": len(problems) == 0, "problems": problems}
         except Exception as e:
-            print(f"Error: {e}")
-    else:
+            payload = {"ok": False, "problems": [str(e)]}
+
+        print(json.dumps(payload, ensure_ascii=False, indent=2))
+        sys.exit(0 if payload["ok"] else 1)
+
+    if not args.task:
         parser.print_help()
+        return
+
+    app = AgentForgeApp()
+    result = app.execute_task(args.task, model_override=args.model)
+
+    if args.json:
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    else:
+        print(f"Task: {result['task']}")
+        print(f"Skill: {result['skill']}")
+        print(f"Model: {result['model']}")
+        print(f"Status: {result['result']['status']}")
+        print(f"Message: {result['result'].get('message', '')}")
 
 
 if __name__ == "__main__":
