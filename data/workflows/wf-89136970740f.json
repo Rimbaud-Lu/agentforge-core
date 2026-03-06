@@ -1,0 +1,53 @@
+{
+  "workflow_id": "wf-89136970740f",
+  "status": "completed",
+  "task": "create fastapi project",
+  "plan": {
+    "type": "generate_project",
+    "task": "create fastapi project"
+  },
+  "skill": "generate_api",
+  "model": "codex",
+  "task_graph": {
+    "nodes": [
+      {
+        "id": "plan",
+        "payload": {
+          "task": "create fastapi project",
+          "plan": {
+            "type": "generate_project",
+            "task": "create fastapi project"
+          }
+        }
+      },
+      {
+        "id": "execute",
+        "payload": {
+          "skill": "generate_api",
+          "model": "codex"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "plan",
+        "to": "execute"
+      }
+    ]
+  },
+  "events": [
+    {
+      "type": "session_bound",
+      "session_id": "session-84df3bcdd4aa"
+    }
+  ],
+  "result": {
+    "status": "success",
+    "mode": "provider-backed-simulated",
+    "task": "create fastapi project",
+    "skill": "generate_api",
+    "model": "codex",
+    "message": "Executed task via generate_api on codex",
+    "provider_output_preview": "[mock-generated]\nTask: create fastapi project\nPlan: {'type': 'generate_project', 'task': 'create fastapi project'}\nSkill: generate_api"
+  }
+}

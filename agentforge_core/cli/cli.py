@@ -20,6 +20,8 @@ def main():
     parser.add_argument("--model", default=None, help="Override selected model")
     parser.add_argument("--json", action="store_true", help="Output JSON")
     parser.add_argument("--list-providers", action="store_true", help="Show configured provider env readiness")
+    parser.add_argument("--resume-workflow", default=None, help="Resume a workflow by workflow id")
+    parser.add_argument("--project-key", default="default", help="Project context key")
     args = parser.parse_args()
 
     if args.init:
@@ -46,13 +48,19 @@ def main():
         print(json.dumps(payload, ensure_ascii=False, indent=2))
         sys.exit(0 if payload["ok"] else 1)
 
+    app = AgentForgeApp()
+
+    if args.resume_workflow:
+        payload = app.resume_workflow(args.resume_workflow)
+        print(json.dumps(payload or {"error": "workflow not found"}, ensure_ascii=False, indent=2))
+        sys.exit(0 if payload else 1)
+
     if not args.task:
         parser.print_help()
         return
 
     logger.info("Executing task: %s", args.task)
-    app = AgentForgeApp()
-    result = app.execute_task(args.task, model_override=args.model)
+    result = app.execute_task(args.task, model_override=args.model, project_key=args.project_key)
 
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=2))
@@ -61,5 +69,7 @@ def main():
         print(f"Skill: {result['skill']}")
         print(f"Model: {result['model']}")
         print(f"Provider: {result['provider']}")
+        print(f"Session: {result['session_id']}")
+        print(f"Workflow: {result['workflow_id']}")
         print(f"Status: {result['status']}")
         print(f"Output: {result['output'].get('message', '')}")
