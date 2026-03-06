@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentforge-core"
+version = "0.1.0"
+description = "AI Agent Software Factory core runtime"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "openai",
+    "qdrant-client",
+    "redis",
+    "prometheus-client",
+    "kafka-python",
+    "pyyaml",
+    "python-dotenv"
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+agentforge = "agentforge_core.cli.cli:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["agentforge_core*"]
