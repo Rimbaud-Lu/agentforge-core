@@ -11,11 +11,12 @@ class WorkflowExecutor:
         if isinstance(task, dict):
             return {
                 "status": "success",
-                "mode": "local-simulated",
+                "mode": "provider-backed-simulated",
                 "task": task.get("task"),
                 "skill": task.get("skill"),
                 "model": task.get("model"),
-                "message": f"Executed task via {task.get('skill')} on {task.get('model')}"
+                "message": f"Executed task via {task.get('skill')} on {task.get('model')}",
+                "provider_output_preview": str(task.get("provider_output", ""))[:300],
             }
 
         return {
