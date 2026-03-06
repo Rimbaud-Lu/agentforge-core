@@ -1,22 +1,29 @@
 class WorkflowExecutor:
     """Workflow Executor for running tasks"""
-    
+
     def __init__(self, runtime=None):
         self.runtime = runtime
-    
+
     def execute(self, task):
-        """Execute a single task"""
         if self.runtime:
             return self.runtime.execute(task)
-        else:
-            # Default execution - just print and return success
-            print(f"Executing: {task}")
-            return {"status": "success", "task": task}
-    
+
+        if isinstance(task, dict):
+            return {
+                "status": "success",
+                "mode": "local-simulated",
+                "task": task.get("task"),
+                "skill": task.get("skill"),
+                "model": task.get("model"),
+                "message": f"Executed task via {task.get('skill')} on {task.get('model')}"
+            }
+
+        return {
+            "status": "success",
+            "mode": "local-simulated",
+            "task": task,
+            "message": f"Executed task: {task}"
+        }
+
     def execute_batch(self, tasks):
-        """Execute multiple tasks"""
-        results = []
-        for task in tasks:
-            result = self.execute(task)
-            results.append(result)
-        return results
+        return [self.execute(task) for task in tasks]
