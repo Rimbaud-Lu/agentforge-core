@@ -9,6 +9,7 @@ from agentforge_core.model_execution.adapters.executor import ModelExecutor
 from agentforge_core.result_types import TaskResult
 from agentforge_core.memory.manager import MemoryManager
 from agentforge_core.workflow.manager import WorkflowManager
+from agentforge_core.observability.history import ExecutionHistory
 
 
 class AgentForgeApp:
@@ -20,6 +21,7 @@ class AgentForgeApp:
         self.token_tracker = TokenTracker()
         self.memory = MemoryManager()
         self.workflow_manager = WorkflowManager()
+        self.history = ExecutionHistory()
 
     def execute_task(self, task: str, model_override: str | None = None, project_key: str = "default") -> dict:
         session_id = self.memory.create_session(task)
@@ -82,7 +84,12 @@ class AgentForgeApp:
         payload["session_id"] = session_id
         payload["workflow_id"] = workflow_id
         payload["project_context"] = self.memory.get_project_context(project_key)
+
+        self.history.record_execution(payload)
         return payload
 
     def resume_workflow(self, workflow_id: str) -> dict | None:
         return self.workflow_manager.resume(workflow_id)
+
+    def dashboard_summary(self, limit: int = 100) -> dict:
+        return self.history.dashboard_summary(limit=limit)

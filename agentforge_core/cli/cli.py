@@ -8,6 +8,7 @@ from agentforge_core.app import AgentForgeApp
 from agentforge_core.bootstrap.init_project import init_project
 from agentforge_core.config_loader import load_all_configs, validate_environment, get_env_summary
 from agentforge_core.logging_utils import setup_logging
+from agentforge_core.dashboard.api import DashboardAPI
 
 
 def main():
@@ -22,6 +23,8 @@ def main():
     parser.add_argument("--list-providers", action="store_true", help="Show configured provider env readiness")
     parser.add_argument("--resume-workflow", default=None, help="Resume a workflow by workflow id")
     parser.add_argument("--project-key", default="default", help="Project context key")
+    parser.add_argument("--dashboard", action="store_true", help="Show dashboard summary")
+    parser.add_argument("--events-limit", type=int, default=20, help="Number of events for dashboard/resume views")
     args = parser.parse_args()
 
     if args.init:
@@ -54,6 +57,11 @@ def main():
         payload = app.resume_workflow(args.resume_workflow)
         print(json.dumps(payload or {"error": "workflow not found"}, ensure_ascii=False, indent=2))
         sys.exit(0 if payload else 1)
+
+    if args.dashboard:
+        dashboard = DashboardAPI().get_summary(limit=args.events_limit)
+        print(json.dumps(dashboard, ensure_ascii=False, indent=2))
+        return
 
     if not args.task:
         parser.print_help()
