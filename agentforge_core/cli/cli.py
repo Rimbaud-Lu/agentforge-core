@@ -22,6 +22,7 @@ def main():
     parser.add_argument("--json", action="store_true", help="Output JSON")
     parser.add_argument("--list-providers", action="store_true", help="Show configured provider env readiness")
     parser.add_argument("--resume-workflow", default=None, help="Resume a workflow by workflow id")
+    parser.add_argument("--retry-workflow", default=None, help="Retry a workflow by workflow id")
     parser.add_argument("--project-key", default="default", help="Project context key")
     parser.add_argument("--dashboard", action="store_true", help="Show dashboard summary")
     parser.add_argument("--events-limit", type=int, default=20, help="Number of events for dashboard/resume views")
@@ -58,6 +59,11 @@ def main():
         print(json.dumps(payload or {"error": "workflow not found"}, ensure_ascii=False, indent=2))
         sys.exit(0 if payload else 1)
 
+    if args.retry_workflow:
+        payload = app.retry_workflow(args.retry_workflow)
+        print(json.dumps(payload, ensure_ascii=False, indent=2))
+        return
+
     if args.dashboard:
         dashboard = DashboardAPI().get_summary(limit=args.events_limit)
         print(json.dumps(dashboard, ensure_ascii=False, indent=2))
@@ -80,4 +86,4 @@ def main():
         print(f"Session: {result['session_id']}")
         print(f"Workflow: {result['workflow_id']}")
         print(f"Status: {result['status']}")
-        print(f"Output: {result['output'].get('message', '')}")
+        print(f"Output: {result['output'].get('message', '') if isinstance(result['output'], dict) else result['output']}")

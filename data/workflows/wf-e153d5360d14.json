@@ -1,0 +1,54 @@
+{
+  "workflow_id": "wf-e153d5360d14",
+  "status": "completed",
+  "task": "create api",
+  "plan": {
+    "type": "generate_project",
+    "task": "create api"
+  },
+  "skill": "generate_api",
+  "model": "codex",
+  "task_graph": {
+    "nodes": [
+      {
+        "id": "plan",
+        "payload": {
+          "task": "create api",
+          "plan": {
+            "type": "generate_project",
+            "task": "create api"
+          }
+        }
+      },
+      {
+        "id": "execute",
+        "payload": {
+          "skill": "generate_api",
+          "model": "codex"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "from": "plan",
+        "to": "execute"
+      }
+    ]
+  },
+  "events": [
+    {
+      "type": "session_bound",
+      "session_id": "session-35358c6f9763"
+    }
+  ],
+  "retry_count": 0,
+  "result": {
+    "status": "success",
+    "mode": "provider-backed-simulated",
+    "task": "create api",
+    "skill": "generate_api",
+    "model": "codex",
+    "message": "Executed task via generate_api on codex",
+    "provider_output_preview": "[mock-generated]\nTask: create api\nPlan: {'type': 'generate_project', 'task': 'create api'}\nSkill: generate_api"
+  }
+}

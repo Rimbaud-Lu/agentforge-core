@@ -1,7 +1,7 @@
 # AgentForge Core
 
 AgentForge Core is an AI agent software factory prototype focused on:
-planner -> skill routing -> model routing -> model execution -> memory -> workflow -> observability.
+planner -> skill routing -> model routing -> model execution -> persistence -> workflow -> observability.
 
 ## Current repository status
 
@@ -10,18 +10,16 @@ Implemented:
 - Planner
 - Skill router
 - Model router
-- Provider abstraction layer
-- Memory manager
-- Workflow store and task graph
-- Resume workflow support
-- Execution history and event store
-- Dashboard summary API
-- Docker scaffolding
+- Provider abstraction layer with fallback
+- Memory manager with backend selection
+- Workflow store, retry and resume support
+- Execution history and dashboard summary API
+- Docker scaffolding for Redis/Qdrant
 - Basic CI and tests
 
 Not production-complete:
 - Real provider API calls for all vendors
-- Redis/Qdrant-backed memory persistence
+- Real Qdrant embedding/search pipeline
 - Full web dashboard UI
 - Production-grade distributed workers
 
@@ -44,6 +42,7 @@ agentforge --doctor
 agentforge --list-providers
 agentforge --json "generate backend api"
 agentforge --resume-workflow wf-xxxxxxxxxxxx
+agentforge --retry-workflow wf-xxxxxxxxxxxx
 agentforge --dashboard
 ```
 
@@ -55,7 +54,7 @@ pytest -q
 
 ## Next priorities
 
-- redis/qdrant-backed memory
-- persistent workflow retry/resume
+- real qdrant embedding and retrieval
+- persistent workflow replay
 - web dashboard UI
 - distributed worker execution

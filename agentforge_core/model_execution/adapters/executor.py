@@ -14,10 +14,17 @@ class ModelExecutor:
         selected = models.get(role, {}) if isinstance(models, dict) else {}
         provider_name = selected.get("provider", "mock")
         model_name = selected.get("model", "mock-model")
-        provider = self.registry.get(provider_name)
-        output = provider.generate(prompt, model=model_name)
+        provider, fallback = self.registry.get_with_fallback(provider_name)
+
+        try:
+            output = provider.generate(prompt, model=model_name)
+            used_provider = provider.name
+        except Exception:
+            output = fallback.generate(prompt, model="mock-model")
+            used_provider = fallback.name
+
         return {
-            "provider": provider_name,
-            "model": model_name,
+            "provider": used_provider,
+            "model": model_name if used_provider != "mock" else "mock-model",
             "output": output,
         }

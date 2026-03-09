@@ -22,6 +22,7 @@ class WorkflowManager:
             "model": model,
             "task_graph": graph.to_dict(),
             "events": [],
+            "retry_count": 0,
         }
         return self.store.create(payload)
 
@@ -48,6 +49,16 @@ class WorkflowManager:
             raise ValueError(f"Workflow not found: {workflow_id}")
         payload["status"] = "failed"
         payload["error"] = error
+        self.store.save(workflow_id, payload)
+        return payload
+
+    def retry(self, workflow_id: str) -> dict:
+        payload = self.store.load(workflow_id)
+        if not payload:
+            raise ValueError(f"Workflow not found: {workflow_id}")
+        payload["status"] = "retrying"
+        payload["retry_count"] = payload.get("retry_count", 0) + 1
+        payload.setdefault("events", []).append({"type": "retry_requested", "retry_count": payload["retry_count"]})
         self.store.save(workflow_id, payload)
         return payload
 

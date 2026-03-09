@@ -39,47 +39,63 @@ class AgentForgeApp:
         self.memory.append_event(session_id, {"type": "plan_created", "plan": plan})
         self.workflow_manager.append_event(workflow_id, {"type": "session_bound", "session_id": session_id})
 
-        exec_payload = self.model_executor.execute(
-            role=skill,
-            prompt=f"Task: {task}\nPlan: {plan}\nSkill: {skill}",
-        )
+        try:
+            exec_payload = self.model_executor.execute(
+                role=skill,
+                prompt=f"Task: {task}\nPlan: {plan}\nSkill: {skill}",
+            )
 
-        self.memory.append_event(session_id, {
-            "type": "provider_output",
-            "provider": exec_payload["provider"],
-            "provider_model": exec_payload["model"],
-        })
+            self.memory.append_event(session_id, {
+                "type": "provider_output",
+                "provider": exec_payload["provider"],
+                "provider_model": exec_payload["model"],
+            })
 
-        workflow_result = self.workflow_executor.execute({
-            "task": task,
-            "plan": plan,
-            "skill": skill,
-            "model": selected_model,
-            "provider_output": exec_payload["output"],
-        })
+            workflow_result = self.workflow_executor.execute({
+                "task": task,
+                "plan": plan,
+                "skill": skill,
+                "model": selected_model,
+                "provider_output": exec_payload["output"],
+            })
 
-        self.memory.save_project_context(project_key, {
-            "last_task": task,
-            "last_skill": skill,
-            "last_model": selected_model,
-            "last_workflow_id": workflow_id,
-        })
+            self.memory.save_project_context(project_key, {
+                "last_task": task,
+                "last_skill": skill,
+                "last_model": selected_model,
+                "last_workflow_id": workflow_id,
+            })
 
-        self.workflow_manager.mark_completed(workflow_id, workflow_result)
+            self.workflow_manager.mark_completed(workflow_id, workflow_result)
 
-        result = TaskResult(
-            status=workflow_result.get("status", "success"),
-            task=task,
-            skill=skill,
-            model=selected_model,
-            output=workflow_result,
-            error=None,
-        )
+            result = TaskResult(
+                status=workflow_result.get("status", "success"),
+                task=task,
+                skill=skill,
+                model=selected_model,
+                output=workflow_result,
+                error=None,
+            )
+
+            provider = exec_payload["provider"]
+            provider_model = exec_payload["model"]
+        except Exception as e:
+            self.workflow_manager.mark_failed(workflow_id, str(e))
+            result = TaskResult(
+                status="failed",
+                task=task,
+                skill=skill,
+                model=selected_model,
+                output={},
+                error=str(e),
+            )
+            provider = "unknown"
+            provider_model = "unknown"
 
         payload = result.to_dict()
         payload["plan"] = plan
-        payload["provider"] = exec_payload["provider"]
-        payload["provider_model"] = exec_payload["model"]
+        payload["provider"] = provider
+        payload["provider_model"] = provider_model
         payload["token_report"] = self.token_tracker.report()
         payload["session_id"] = session_id
         payload["workflow_id"] = workflow_id
@@ -90,6 +106,9 @@ class AgentForgeApp:
 
     def resume_workflow(self, workflow_id: str) -> dict | None:
         return self.workflow_manager.resume(workflow_id)
+
+    def retry_workflow(self, workflow_id: str) -> dict:
+        return self.workflow_manager.retry(workflow_id)
 
     def dashboard_summary(self, limit: int = 100) -> dict:
         return self.history.dashboard_summary(limit=limit)

@@ -14,5 +14,10 @@ class ProviderRegistry:
     def get(self, provider_name: str):
         return self._providers.get(provider_name, self._providers["mock"])
 
+    def get_with_fallback(self, provider_name: str):
+        primary = self.get(provider_name)
+        fallback = self._providers["mock"]
+        return primary, fallback
+
     def list_names(self):
         return list(self._providers.keys())
