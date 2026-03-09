@@ -19,5 +19,5 @@ dist/
 .vscode/
 *.log
 generated_project/
-data/workflows/*.json
-data/observability/*.jsonl
+data/workflows/
+data/observability/
