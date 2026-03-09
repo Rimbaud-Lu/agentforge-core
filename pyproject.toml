@@ -29,4 +29,4 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["agentforge_core*"]
+include = ["agentforge_core*", "control_plane*", "router*", "workflow*", "observability*", "distributed*", "model_execution*", "memory*", "agents*", "skills*", "task_graph*", "planning*", "interface*", "tools*"]
