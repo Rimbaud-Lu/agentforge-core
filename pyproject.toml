@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "agentforge-core"
-version = "0.1.0"
-description = "AI Agent Software Factory core runtime"
+version = "0.9.0"
+description = "AI Agent Software Factory prototype"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
